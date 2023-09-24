@@ -1,0 +1,254 @@
+\documentclass[12pt,
+               a4paper,
+               article,
+               oneside,
+               norsk,oldfontcommands]{memoir}
+\usepackage{student}
+% Metadata
+\date{\today}
+\setmodule{FYS-STK4155: Applied Data Analysis and Machine Learning}
+\setterm{Fall, 2023}
+
+%-------------------------------%
+% Other details
+% TODO: Fill these
+%-------------------------------%
+\title{Weekly Exercises: Week 37}
+\setmembername{Jonas Semprini Næss}  % Fill group member names
+
+%-------------------------------%
+% Add / Delete commands and packages
+% TODO: Add / Delete here as you need
+%-------------------------------%
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+%\usepackage[utf8]{inputenc}
+\usepackage{setspace}
+\usepackage[T1]{fontenc}
+\usepackage{titling}% the wheel somebody else kindly made for us earlier
+\usepackage{fancyhdr}
+\usepackage{fancybox}
+\usepackage{epigraph} 
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.12}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyvrb}
+\usepackage[scaled]{beramono}
+\usepackage[final]{microtype}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{thmtools}
+\usepackage{babel}
+\usepackage{csquotes}
+\usepackage{listings}
+\usetikzlibrary{calc,intersections,through,backgrounds}
+\usepackage{tkz-euclide} 
+\lstset{basicstyle = \ttfamily}
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage[colorlinks, allcolors = uiolink]{hyperref}
+\usepackage[noabbrev]{cleveref}
+\pretolerance = 2000
+\tolerance    = 6000
+\hbadness     = 6000
+\newcounter{probnum}[section]
+\newcounter{subprobnum}[probnum] 
+\usepackage{dirtytalk}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage[section]{placeins}
+\usepackage{varwidth}
+\usepackage{optidef}
+\definecolor{uiolink}{HTML}{0B5A9D}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{frame=tb,
+  language=R,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=fullflexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+} 
+\usepackage{commath}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newcommand{\Q}{ \qquad \hfill \blacksquare}
+\newcommand\myeq{\stackrel{\mathclap{\normalfont{uif}}}{\sim}}
+\let\oldref\ref
+\renewcommand{\ref}[1]{(\oldref{#1})}
+\newtheorem{lemma}[theorem]{Lemma}
+\setlength \epigraphwidth {\linewidth}
+\setlength \epigraphrule {0pt}
+\AtBeginDocument{\renewcommand {\epigraphflush}{center}}
+\renewcommand {\sourceflush} {center}
+\parindent 0ex
+\renewcommand{\thesection}{\roman{section}} 
+\renewcommand{\thesubsection}{\thesection.\roman{subsection}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\T}{\top}
+\newcommand{\bl}{\left\{}
+\newcommand{\br}{\right\}}
+\newcommand{\spaze}{\vspace{4mm}\\}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Rel}{\mathbb{R}}
+\newcommand{\expdist}[2]{%
+        \normalfont{\textsc{Exp}}(#1, #2)%
+    }
+\newcommand{\expparam}{\bm \lambda}
+\newcommand{\Expparam}{\bm \Lambda}
+\newcommand{\natparam}{\bm \eta}
+\newcommand{\Natparam}{\bm H}
+\newcommand{\sufstat}{\bm u}
+
+% Main document
+\begin{document}
+\header{}
+\section*{\centering Analytical Exercises}
+\subsection*{\centering Expectation values for ordinary least squares expressions:}
+(\textbf{\rom{1}}.) \emph{Show that the expectation value of $\mathbf{y}$ for a given element $i$ is} \begin{align*}
+\mathbb{E}(y_i)  =\sum_{j}x_{ij} \beta_j=\mathbf{X}_{i, \ast} \, \boldsymbol{\beta}
+\end{align*}
+\textbf{Solution:} \spaze
+Recall that we can describe our model $\mathbf{y}$ by a function $ f(\mathbf{x}) + \boldsymbol{\epsilon}$ where $ \boldsymbol{\epsilon} \sim \mathcal{N}(0, \sigma^2)$. The function $ f(\mathbf{x})$ can be interpreted as some matrix $\mathbf{X}$ times a non-random scalar $\boldsymbol{\beta}$. Thus is the expectation value of $y_i$ \footnote{By convention of notation used in the description of the exercise $ \mathbf{X}_{i,*}$ is supposed to define the sum over all values $k$ in row $i$ of the matrix $\mathbf{X}$}
+\begin{align*}
+\mathbb{E}(y_i) &= \mathbb{E}(\mathbf{X}_{i,*} \boldsymbol{\beta} + \epsilon_{i} ) \\[5pt]
+ &= \mathbb{E}(\mathbf{X}_{i,*} \boldsymbol{\beta}) + \underbrace{\mathbb{E}( \epsilon_{i} )}_\text{ = 0} \\[5pt]
+ &= \mathbf{X}_{i,*} \boldsymbol{\beta}
+\end{align*}
+Which is what we wanted to show. $\Q$ \spaze 
+(\textbf{\rom{2}}.) \emph{Show that}
+\begin{align*}
+\text{Var}(y_i) = \sigma^2
+\end{align*} 
+\textbf{Solution:} \spaze 
+By direct calculation of the variance we have that 
+\begin{align*}
+\text{Var}(y_i) = \mathbb{E} \left[ ( y_{i}^2 - \mathbb{E}(y_i)) ^2\right] &= \mathbb{E}(y_{i}^2) - (\mathbb{E}(y_{i}))^2 \\[5pt]
+&= \mathbb{E}((\mathbf{X}_{i, *} \boldsymbol{\beta} + \epsilon_{i})^2) - (\mathbf{X}_{i,*} \boldsymbol{\beta})^2 \\[5pt] 
+&=  \mathbb{E}((\mathbf{X}_{i,*} \boldsymbol{\beta})^2) +  \mathbb{E}(2 \epsilon_{i} \mathbf{X}_{i, *} \boldsymbol{\beta}) +   \mathbb{E}(\epsilon_{i}^2) - (\mathbf{X}_{i,*} \boldsymbol{\beta})^2  \\[5pt] 
+&= \mathbb{E}(\epsilon_{i}^2) = \sigma^2.
+\end{align*}
+Which is what we wanted to show. $\Q$ \spaze 
+(\textbf{\rom{3}}.) \emph{Show that for the optimal parameters $\boldsymbol{\hat{\beta}}$ in OLS that}
+\begin{align*}
+\mathbb{E}(\boldsymbol{\hat{\beta}}) = \boldsymbol{\beta}
+\end{align*} 
+\textbf{Solution:} \spaze 
+By defintion we have that the optimal parameters $\boldsymbol{\hat{\beta}}$ for OLS is given by 
+\begin{align*}
+\boldsymbol{\hat{\beta}} = \left( \mathbf{X}^T \mathbf{X} \right)^{-1} \mathbf{X}^T \mathbf{Y} 
+\end{align*}
+which then yields an expectation value of 
+\begin{align*}
+\mathbb{E}(\boldsymbol{\hat{\beta}}) &= \mathbb{E} \left( \left( \mathbf{X}^T \mathbf{X} \right)^{-1} \mathbf{X}^T \mathbf{Y} \right) \\[5pt]
+&= \left( \mathbf{X}^T \mathbf{X} \right)^{-1} \mathbf{X}^T  \mathbb{E}(\mathbf{Y}) \\[5pt]
+&= \left( \mathbf{X}^T \mathbf{X} \right)^{-1} \mathbf{X}^T \mathbf{X} \boldsymbol{\beta} \\[5pt] 
+&= \boldsymbol{\beta}.
+\end{align*}
+Where we have used the fact that $\mathbf{X}$ is a non-stochastic variable and that the $\mathbb{E}(\mathbf{Y}) = \mathbf{X}\boldsymbol{\beta}$.  Hence can we observe that the OLS estimator is unbiased. $\Q$ \spaze 
+(\textbf{\rom{4}}.) \emph{Show that the variance for $\boldsymbol{\hat{\beta}}$ is}
+\begin{align*}
+\text{Var}(\boldsymbol{\hat{\beta}}) = \sigma^2 \, (\mathbf{X}^{T} \mathbf{X})^{-1}.
+\end{align*}
+\textbf{Solution:} \spaze 
+Let $\phi = \left( \mathbf{X}^T \mathbf{X} \right)^{-1} \mathbf{X}^T $ such that we can write $ \boldsymbol{\hat{\beta}} = \phi \mathbf{Y} $. Then by calculating the variance we have that 
+\begin{align}
+\text{Var}(\boldsymbol{\hat{\beta}}) &= \text{Var}(\phi \mathbf{Y})  \\[5pt]
+&= \phi \text{Var}(\mathbf{Y}) \phi^T \label{eq4} \\[5pt] 
+&=  \phi \text{Var}(\mathbf{X} \boldsymbol{\beta} + \boldsymbol{\epsilon}) \phi^T \\[5pt] 
+&=  \phi \sigma^2 \phi^T  \label{eq1} \\[5pt]
+&= \sigma^2 \left(  \left( \mathbf{X}^T \mathbf{X} \right)^{-1} \mathbf{X}^T   \left(  \left( \mathbf{X}^T \mathbf{X} \right)^{-1} \mathbf{X}^T  \right)^T \right) \\[5pt]
+&=  \sigma^2 \left(\left( \mathbf{X}^T \mathbf{X} \right)^{-1} \mathbf{X}^T  \mathbf{X}  \left( \mathbf{X}^T \mathbf{X} \right)^{-1} \right) \label{eq2}  \\[5pt]
+&= \sigma^2 \left( \mathbf{X}^T \mathbf{X} \right)^{-1}  
+\end{align}
+which is what we wanted to show. $\Q$
+\subsection*{ \centering Expectation values for Ridge regression}
+(\textbf{\rom{1}}.) \emph{Show that}
+\begin{align*}
+\mathbb{E} \big[ \boldsymbol{\beta}^{\mathrm{Ridge}} \big]=(\mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1} (\mathbf{X}^{\top} \mathbf{X})\
+\boldsymbol{\beta}^{\mathrm{OLS}}.
+\end{align*}
+By the definition of ridge regression we know that the optimal parameters are given by 
+\begin{align*}
+\tilde{\boldsymbol{\beta}} =(\mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1} \mathbf{X}^{\top} \mathbf{Y}.
+\end{align*}
+Hence would accordingly the expectation value yield 
+\begin{align*}
+\mathbb{E}(\tilde{\boldsymbol{\beta}}) &= \mathbb{E} \left( (\mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1} \mathbf{X}^{\top} \mathbf{Y} \right) \\[5pt]
+&= (\mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1} \mathbf{X}^{\top} \mathbb{E}(\mathbf{Y}) \\[5pt] 
+&= (\mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1} \mathbf{X}^{\top} \mathbb{E}( \mathbf{X} \boldsymbol{\beta} + \epsilon_i) \\[5pt] 
+&= (\mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1} \mathbf{X}^{\top} \mathbf{X} \boldsymbol{\beta} \\[5pt]
+&= (\mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1} \mathbf{X}^{\top} \mathbf{X} \boldsymbol{\beta}^{\mathrm{OLS}}. \qquad \boxed{\text{By results of Ordinary Least Squares}}
+\end{align*}
+Meaning $\mathbb{E} \big[ \tilde{\boldsymbol{\beta}}\big] \not= \boldsymbol{\beta}^{\mathrm{OLS}}$ for any $\lambda > 0$ and concludes what we wanted to show. $\Q$ \spaze 
+(\textbf{\rom{2}}.) \emph{Show also that the variance is} 
+\begin{align*}
+\text{Var}[\boldsymbol{\beta}^{\mathrm{Ridge}}]=\sigma^2[  \mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I} ]^{-1}  \mathbf{X}^{T}\mathbf{X} \{ [  \mathbf{X}^{\top} \mathbf{X} + \lambda \mathbf{I} ]^{-1}\}^{T}.
+\end{align*}
+\textbf{Solution:} \spaze 
+By defintion of the variance for a random stochastic variable we have that 
+\begin{align*}
+\text{Var}( \tilde{\boldsymbol{\beta}}) = \mathbf{A}\text{Var}(\mathbf{Y}) \mathbf{A}^T
+\end{align*}
+where $\mathbf{A} = (\mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1} \mathbf{X}^{T}$ . Hence 
+\begin{align}
+\text{Var}( \tilde{\boldsymbol{\beta}}) &=  \mathbf{A} \text{Var}(\mathbf{X} \boldsymbol{\beta} + \epsilon_{i}) \mathbf{A}^T  \\[5pt]
+&=  \mathbf{A} \sigma^2 \mathbf{A}^T \label{eq5} \\[5pt]
+&= \sigma^2 \left( (\mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1})\mathbf{X}^{T} (( \mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1}) \mathbf{X}^{T})^T  \right) \\[5pt] 
+&= \sigma^2 \left( (\mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1})\mathbf{X}^{T} \mathbf{X} ( \mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1})^T  \right)\label{eq3} \\[5pt]
+&= \sigma^2[  \mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I} ]^{-1}  \mathbf{X}^{T}\mathbf{X} \{ [  \mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I} ]^{-1}\}^{T}
+\end{align}
+which is what we wanted to show. $\Q$
+\appendix
+\section*{\centering Appendix:}
+\subsection{More detailed calculations:}
+\underline{\textbf{Transpose of Matrix product:}} \spaze 
+Let $\mathbf{A}, \mathbf{B} \in \mathbb{R}^{m \times n}$ then 
+\begin{align*}
+\left( \mathbf{A} \mathbf{B} \right)^T = \mathbf{B}^T \mathbf{A}^T.
+\end{align*}
+Used in \eqref{eq2} and \eqref{eq3}. \spaze 
+\underline{\textbf{Variance Identity:}} \spaze 
+Let $\boldsymbol{\phi} \in \mathbb{R}^{m \times n}$ and $\mathbf{X} \in \mathbb{R}^{n \times 1}$. Then 
+\begin{align*}
+\text{Var}(\boldsymbol{\phi} \mathbf{X}) &= \mathbb{E} \{ [ (\boldsymbol{\phi} \mathbf{X} - \mathbb{E}( \boldsymbol{\phi}) (\mathbf{X} \boldsymbol{\phi} \mathbf{X} - \mathbb{E}(\boldsymbol{\phi} \mathbf{X})]^{T} \} \\[5pt] 
+&=\mathbb{E} \{ [\boldsymbol{\phi} \mathbf{X} - \boldsymbol{\phi} \mathbb{E}( \mathbf{X})] [\boldsymbol{\phi} \mathbf{X} - \boldsymbol{\phi}\mathbb{E}(\mathbf{X})]^{T} \} \\[5pt] 
+&= \mathbb{E} \{ [\boldsymbol{\phi}( \mathbf{X} -\mathbb{E}( \mathbf{X}))] [\boldsymbol{\phi} (\mathbf{X} - \mathbb{E}(\mathbf{X}))]^{T} \}  \\[5pt]
+&= \boldsymbol{\phi} \mathbb{E} \{ [\mathbf{X} -\mathbb{E}( \mathbf{X})] [\mathbf{X} - \mathbb{E}(\mathbf{X})]^{T} \} \boldsymbol{\phi}^T \\[5pt]
+&= \boldsymbol{\phi} \mathbf{X} \boldsymbol{\phi}^T
+\end{align*}
+Used at \eqref{eq4} and \eqref{eq5}.
+\spaze 
+\eqref{eq1} Want to show that $\mathbb{E}( \mathbf{Y} \mathbf{Y}^T) = \mathbf{X} \boldsymbol{\beta} \boldsymbol{\beta}^T \mathbf{X}^T + \sigma^2 I_{n \times n}$. \spaze 
+Remember that we can model $\mathbf{y}$ by  $\mathbf{y} =\mathbf{X} \boldsymbol{\beta} + \boldsymbol{\epsilon}$ where $\boldsymbol{\epsilon} \sim \mathcal{N}(0, \sigma^2)$. This implies that for each component $y_{i}$ we have that $y_{i} =X_{i, *} \beta_{i} + \epsilon_{i}$ where each $\epsilon_{i}$ has variance $\sigma^2$. Thus for the full model the $\boldsymbol{\epsilon}$ is simply a diagonal matrix with its variance along the main diagonal, hence $\sigma^2 I_{n \times n}$ by factorisation. By utilising this fact we then have that
+\begin{align*}
+\mathbb{E}( \mathbf{Y} \mathbf{Y}^T) &= \mathbb{E}\left((\mathbf{X} \boldsymbol{\beta} + \boldsymbol{\epsilon}) (\mathbf{X} \boldsymbol{\beta} + \boldsymbol{\epsilon})^T \right) \\[5pt]
+&=\mathbb{E} \left( \mathbf{X} \boldsymbol{\beta} \boldsymbol{\beta}^T \mathbf{X}^T  +  \mathbf{X} \boldsymbol{\beta} \boldsymbol{\epsilon}^T + \boldsymbol{\epsilon}  \boldsymbol{\beta}^T \mathbf{X}^T  + \boldsymbol{\epsilon}^2  \right) \\[5pt] 
+&= \mathbb{E} \left( \mathbf{X} \boldsymbol{\beta} \boldsymbol{\beta}^T \mathbf{X}^T \right) +  \mathbb{E} \left(  \mathbf{X} \boldsymbol{\beta} \boldsymbol{\epsilon}^T \right) +  \mathbb{E} \left(  \boldsymbol{\epsilon}  \boldsymbol{\beta}^T \mathbf{X}^T \right) + \mathbb{E} \left(  \boldsymbol{\epsilon}^2  \right) \\[5pt] 
+&= \mathbf{X} \boldsymbol{\beta} \boldsymbol{\beta}^T \mathbf{X}^T + 0 + 0 + \sigma^2 I_{n \times n} \\[5pt] 
+&=  \mathbf{X} \boldsymbol{\beta} \boldsymbol{\beta}^T \mathbf{X}^T + \sigma^2 I_{n \times n}.
+\end{align*}
+Which is what we wanted to show. $\Q$
+\end{document}

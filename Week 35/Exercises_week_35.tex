@@ -1,0 +1,188 @@
+\documentclass[12pt,
+               a4paper,
+               article,
+               oneside,
+               norsk,oldfontcommands]{memoir}
+\usepackage{student}
+% Metadata
+\date{\today}
+\setmodule{FYS-STK4155: Applied Data Analysis and Machine Learning}
+\setterm{Fall, 2023}
+
+%-------------------------------%
+% Other details
+% TODO: Fill these
+%-------------------------------%
+\title{Weekly Exercises: Week 35}
+\setmembername{Jonas Semprini Næss}  % Fill group member names
+
+%-------------------------------%
+% Add / Delete commands and packages
+% TODO: Add / Delete here as you need
+%-------------------------------%
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+%\usepackage[utf8]{inputenc}
+\usepackage{setspace}
+\usepackage[T1]{fontenc}
+\usepackage{titling}% the wheel somebody else kindly made for us earlier
+\usepackage{fancyhdr}
+\usepackage{fancybox}
+\usepackage{epigraph} 
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.12}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyvrb}
+\usepackage[scaled]{beramono}
+\usepackage[final]{microtype}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{thmtools}
+\usepackage{babel}
+\usepackage{csquotes}
+\usepackage{listings}
+\usetikzlibrary{calc,intersections,through,backgrounds}
+\usepackage{tkz-euclide} 
+\lstset{basicstyle = \ttfamily}
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage[colorlinks, allcolors = uiolink]{hyperref}
+\usepackage[noabbrev]{cleveref}
+\pretolerance = 2000
+\tolerance    = 6000
+\hbadness     = 6000
+\newcounter{probnum}[section]
+\newcounter{subprobnum}[probnum] 
+\usepackage{dirtytalk}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage[section]{placeins}
+\usepackage{varwidth}
+\usepackage{optidef}
+\definecolor{uiolink}{HTML}{0B5A9D}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{frame=tb,
+  language=R,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=fullflexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+} 
+\usepackage{commath}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newcommand{\Q}{ \qquad \hfill \blacksquare}
+\newcommand\myeq{\stackrel{\mathclap{\normalfont{uif}}}{\sim}}
+\let\oldref\ref
+\renewcommand{\ref}[1]{(\oldref{#1})}
+\newtheorem{lemma}[theorem]{Lemma}
+\setlength \epigraphwidth {\linewidth}
+\setlength \epigraphrule {0pt}
+\AtBeginDocument{\renewcommand {\epigraphflush}{center}}
+\renewcommand {\sourceflush} {center}
+\parindent 0ex
+\renewcommand{\thesection}{\roman{section}} 
+\renewcommand{\thesubsection}{\thesection.\roman{subsection}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\T}{\top}
+\newcommand{\bl}{\left\{}
+\newcommand{\br}{\right\}}
+\newcommand{\spaze}{\vspace{4mm}\\}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Rel}{\mathbb{R}}
+\newcommand{\expdist}[2]{%
+        \normalfont{\textsc{Exp}}(#1, #2)%
+    }
+\newcommand{\expparam}{\bm \lambda}
+\newcommand{\Expparam}{\bm \Lambda}
+\newcommand{\natparam}{\bm \eta}
+\newcommand{\Natparam}{\bm H}
+\newcommand{\sufstat}{\bm u}
+
+% Main document
+\begin{document}
+\header{}
+\section*{ \centering Exercise 1: Analytical Exercises}
+a.) \emph{Show that}
+\begin{align*}
+\frac{\partial (\mathbf{b}^T \mathbf{a})}{\partial \mathbf{a}} = \mathbf{b}.
+\end{align*}
+\textbf{Solution:} \spaze 
+By convention we assume that both $\mathbf{a},\mathbf{b} \in \R^{n \times 1}$. Hence can we re-write the given expression as 
+\begin{align*}
+\frac{\partial \left( \sum_{i} b_i a_i \right)}{\partial a_k}
+\end{align*}
+\footnote{I have decided to adapt standard typing and not boldface for specifying when we are working with scalar elements of respective vectors or matricies}
+$ \forall i,k = 0, 1, 2, \ldots, n-1$, which yields 
+\begin{align*}
+\frac{\partial \left( \sum_{i} b_i a_i \right)}{\partial \mathbf{a_k}}  &= b_k \\[5pt] & \Downarrow \\[5pt]
+\frac{\partial (\mathbf{b}^T \mathbf{a})}{\partial \mathbf{a}} &= \begin{bmatrix} b_0 \\ b_2 \\ \vdots \\ b_{n-1} \end{bmatrix} = \mathbf{b} 
+\end{align*}
+$\Q$. \spaze 
+b.) \emph{Show that} 
+\begin{align*}
+\frac{\partial (\mathbf{a}^T \mathbf{A} \mathbf{a})}{\partial \mathbf{a}} = \mathbf{a}^T( \mathbf{A} + \mathbf{A}).
+\end{align*}
+Let $\mathbf{W} = \mathbf{A} \mathbf{a} $ such that the original quadratic form now becomes $  \mathbf{a}^T  \mathbf{W}$. By this we can initiate the product rule for derivatives. Thus 
+\begin{align*}
+\frac{\partial \mathbf{a}^T}{\partial \mathbf{a}} \mathbf{W} + \mathbf{a}^T \frac{\partial \mathbf{W}}{\partial \mathbf{a}}
+\end{align*}
+which by applying (a.) gives that 
+\begin{align*}
+\frac{\partial \mathbf{a}^T}{\partial \mathbf{a}} \mathbf{W} + \mathbf{a}^T \frac{\partial \mathbf{W}}{\partial \mathbf{a}} = \mathbf{W}^T + \mathbf{a}^T\mathbf{A}.
+\end{align*}
+Finally exploit the mathematical fact of $ \boxed{(AB)^T = B^TA^T}$ yielding 
+\begin{align*}
+\mathbf{W}^T + \mathbf{a}^T \mathbf{A} &= \mathbf{a}^T \mathbf{A}^T + \mathbf{a}^T \mathbf{A} \\[5pt] 
+&= \mathbf{a}^T (\mathbf{A} + \mathbf{A}^T)
+\end{align*}
+which is what we wanted to show. $\Q$ \spaze 
+c.) \emph{Show that} 
+\begin{align*}
+\frac{\partial \left(\mathbf{x}-\mathbf{A}\mathbf{s}\right)^T\left(\mathbf{x}-\mathbf{A}\mathbf{s}\right)}{\partial \mathbf{s}} = -2\left(\mathbf{x}-\mathbf{A}\mathbf{s}\right)^T\mathbf{A}.
+\end{align*}
+We follow the same reasoning as in (b.) which gives us the following 
+\begin{align*}
+\frac{\partial \left(\mathbf{x}-\mathbf{A}\mathbf{s}\right)^T}{\partial \mathbf{s}} \left(\mathbf{x}-\mathbf{A}\mathbf{s}\right) + \left(\mathbf{x}-\mathbf{A}\mathbf{s}\right)^T \frac{\partial \left(\mathbf{x}-\mathbf{A}\mathbf{s}\right)}{\partial \mathbf{s}}
+\end{align*}.
+Split up the parentheses such that 
+\begin{align*}
+\frac{\partial \mathbf{x}^T}{\partial \mathbf{s}} \left(\mathbf{x}-\mathbf{A}\mathbf{s}\right) - \left( \frac{\partial \left(\mathbf{A}\mathbf{s}\right)^T}{\partial \mathbf{s}} \right) \left(\mathbf{x}-\mathbf{A}\mathbf{s}\right) + 
+\left(\mathbf{x}-\mathbf{A}\mathbf{s}\right)^T \frac{\partial \mathbf{x}}{\partial \mathbf{s}} - \left(\mathbf{x}-\mathbf{A}\mathbf{s}\right)^T \left(\frac{\partial \left(\mathbf{A}\mathbf{s}\right)}{\partial \mathbf{s}} \right).
+\end{align*}
+Then differentiate with respect to $\mathbf{s}$, yielding 
+\begin{align*}
+- \mathbf{A}( \mathbf{x} - \mathbf{A}\mathbf{s})^T - ( \mathbf{x} - \mathbf{A}\mathbf{s})^T \mathbf{A}  = -2( \mathbf{x} - \mathbf{A}\mathbf{s})^T  \mathbf{A}.
+\end{align*}
+Which is what we wanted to show. $\Q$ \spaze 
+d.) \spaze 
+To analyse the second derivate of the above mentioned result, we first differentiate $-2( \mathbf{x} - \mathbf{A}\mathbf{s})^T  \mathbf{A}$ with respect to $\mathbf{s}$ again. This gives: 
+\begin{align*}
+-2 \frac{\partial (\mathbf{x} - \mathbf{A}\mathbf{s})^T  \mathbf{A}}{\partial \mathbf{s}} &= 2 \frac{(\mathbf{A} \mathbf{s})^T}{\partial \mathbf{s}} \mathbf{A} \\[5pt]
+&= 2 \mathbf{A}^T \mathbf{A}
+\end{align*}
+Which describes the Hessian Matrix. If $\mathbf{A}$ happens to be symmetric then obviously we would have that $-2 \frac{\partial (\mathbf{x} - \mathbf{A}\mathbf{s})^T  \mathbf{A}}{\partial \mathbf{s}} = 2 \mathbf{A}^2$, and if orthogonal then $-2 \frac{\partial (\mathbf{x} - \mathbf{A}\mathbf{s})^T  \mathbf{A}}{\partial \mathbf{s}} = 2 $. $\Q$
+\end{document}
