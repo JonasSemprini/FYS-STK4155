@@ -1,0 +1,173 @@
+\documentclass[12pt,
+               a4paper,
+               article,
+               oneside,
+               norsk,oldfontcommands]{memoir}
+\usepackage{student}
+% Metadata
+\date{\today}
+\setmodule{FYS-STK4155: Applied Data Analysis and Machine Learning}
+\setterm{Fall, 2023}
+
+%-------------------------------%
+% Other details
+% TODO: Fill these
+%-------------------------------%
+\title{Weekly Exercises: Week 38}
+\setmembername{Jonas Semprini Næss}  % Fill group member names
+
+%-------------------------------%
+% Add / Delete commands and packages
+% TODO: Add / Delete here as you need
+%-------------------------------%
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+%\usepackage[utf8]{inputenc}
+\usepackage{setspace}
+\usepackage[T1]{fontenc}
+\usepackage{titling}% the wheel somebody else kindly made for us earlier
+\usepackage{fancyhdr}
+\usepackage{fancybox}
+\usepackage{epigraph} 
+\usepackage{tikz}
+\usepackage{bm}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.12}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyvrb}
+\usepackage[scaled]{beramono}
+\usepackage[final]{microtype}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{thmtools}
+\usepackage{babel}
+\usepackage{csquotes}
+\usepackage{listings}
+\usetikzlibrary{calc,intersections,through,backgrounds}
+\usepackage{tkz-euclide} 
+\lstset{basicstyle = \ttfamily}
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage[colorlinks, allcolors = uiolink]{hyperref}
+\usepackage[noabbrev]{cleveref}
+\pretolerance = 2000
+\tolerance    = 6000
+\hbadness     = 6000
+\newcounter{probnum}[section]
+\newcounter{subprobnum}[probnum] 
+\usepackage{dirtytalk}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage[section]{placeins}
+\usepackage{varwidth}
+\usepackage{optidef}
+\definecolor{uiolink}{HTML}{0B5A9D}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{frame=tb,
+  language=R,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=fullflexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+} 
+\usepackage{commath}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newcommand{\Q}{ \qquad \hfill \blacksquare}
+\newcommand\myeq{\stackrel{\mathclap{\normalfont{uif}}}{\sim}}
+\let\oldref\ref
+\renewcommand{\ref}[1]{(\oldref{#1})}
+\newtheorem{lemma}[theorem]{Lemma}
+\setlength \epigraphwidth {\linewidth}
+\setlength \epigraphrule {0pt}
+\AtBeginDocument{\renewcommand {\epigraphflush}{center}}
+\renewcommand {\sourceflush} {center}
+\parindent 0ex
+\renewcommand{\thesection}{\roman{section}} 
+\renewcommand{\thesubsection}{\thesection.\roman{subsection}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\T}{\top}
+\newcommand{\bl}{\left\{}
+\newcommand{\br}{\right\}}
+\newcommand{\spaze}{\vspace{4mm}\\}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Rel}{\mathbb{R}}
+\newcommand{\expdist}[2]{%
+        \normalfont{\textsc{Exp}}(#1, #2)%
+    }
+\newcommand{\expparam}{\bm \lambda}
+\newcommand{\Expparam}{\bm \Lambda}
+\newcommand{\natparam}{\bm \eta}
+\newcommand{\Natparam}{\bm H}
+\newcommand{\sufstat}{\bm u}
+
+% Main document
+\begin{document}
+\header{}
+\section*{\centering Analytical Exercises:}
+\textbf{(\rom{1}.)} \emph{The parameters $\boldsymbol{\beta}$ are in turn found by optimizing the mean
+squared error via the so-called cost function}
+$$
+C(\boldsymbol{X},\boldsymbol{\beta}) =\frac{1}{n}\sum_{i=0}^{n-1}(y_i-\tilde{y}_i)^2=\mathbb{E}\left[(\boldsymbol{y}-\boldsymbol{\tilde{y}})^2\right].
+$$
+\emph{Here the expected value $\mathbb{E}$ is the sample value.}
+\emph{Show that you can rewrite  this in terms of a term which contains the variance of the model itself (the so-called variance term), a
+term which measures the deviation from the true data and the mean value of the model (the bias term) and finally the variance of the noise.
+That is, show that} 
+$$
+\mathbb{E}\left[(\boldsymbol{y}-\boldsymbol{\tilde{y}})^2\right]=\mathrm{Bias}[\tilde{y}]+\mathrm{var}[\tilde{y}]+\sigma^2,
+$$
+\textbf{Solution:} \spaze
+We start of by rewriting $\mathbb{E}\left[(\boldsymbol{y}-\boldsymbol{\tilde{y}})^2\right] $ to $ \mathbb{E}\left[(\boldsymbol{f} + \boldsymbol{\epsilon} -\boldsymbol{\tilde{y}})^2\right]$. From this one gets that 
+\begin{align*}
+        \mathbb{E}[(\boldsymbol{y}-\boldsymbol{\tilde{y}})^2] &= \mathbb{E}[(\bm{f} + \bm{\varepsilon} - \bm{\Tilde{y}})^2] \\[5pt]
+        &= \mathbb{E}[(\bm{f} - \bm{\tilde{y}}) + \bm{\varepsilon})^2] \\[5pt]
+        &= \mathbb{E}[(\bm{f}-\bm{\Tilde{y}})^2 + 2(\bm{f}-\bm{\Tilde{y}})\bm{\varepsilon} + \bm{\varepsilon}^2] \\[5pt]
+        &= \mathbb{E}[(\bm{f}-\bm{\Tilde{y}})^2] + 2\mathbb{E}[(\bm{f}-\bm{\Tilde{y}})\underbrace{\bm{\varepsilon}}_{=0}]+\underbrace{\mathbb{E}[\bm{\varepsilon}^2]}_{= \sigma^2} \\
+        &= \mathbb{E}[(\bm{f}-\bm{\Tilde{y}})^2] + \sigma^2 .
+\end{align*}
+By adding and subtracting $\mathbb{E}[\bm{\Tilde{y}}]$ we obtain
+\begin{align*}
+         \mathbb{E}[(\bm{y}-\bm{\tilde{y}})^2] &= \mathbb{E}[(\bm{f}-\bm{\Tilde{y}}+ \mathbb{E}[\bm{\tilde{y}}] - \mathbb{E}[\bm{\tilde{y}}])^2]+\sigma^2 \\[5pt]
+        &= \mathbb{E}[((\bm{f}- \mathbb{E}[\bm{\tilde{y}}]) + (\mathbb{E}[\bm{\tilde{y}}] -\bm{\Tilde{y}}))^2]+\sigma^2\\[5pt]
+        & =\mathbb{E}[(\bm{f}- \mathbb{E}[\bm{\tilde{y}}])^2 + 2(\bm{f}- \mathbb{E}[\bm{\tilde{y}}])(\mathbb{E}[\bm{\tilde{y}}] -\bm{\Tilde{y}}) + (\mathbb{E}[\bm{\tilde{y}}]-\bm{\Tilde{y}})^2] + \sigma^2\\[5pt]
+        &= \mathbb{E}[(\bm{f}- \mathbb{E}[\bm{\tilde{y}}])^2 + (\mathbb{E}[\bm{\tilde{y}}]-\bm{\Tilde{y}})^2] + 2\mathbb{E}[(\bm{f}- \mathbb{E}[\bm{\tilde{y}}])(\mathbb{E}[\bm{\tilde{y}}] -\bm{\Tilde{y}})] + \sigma^2
+\end{align*}
+where
+\begin{equation}
+    \begin{aligned}
+        \mathbb{E}[(\bm{f}- \mathbb{E}[\bm{\tilde{y}}])( \mathbb{E}[\tilde{\bm{y}} -\bm{\Tilde{y}})] &= \mathbb{E}[\bm{f}\mathbb{E}[\bm{\tilde{y}}] - \bm{f\Tilde{y}} - \mathbb{E}[\bm{\tilde{y}}]^2 + \bm{\Tilde{y}}\mathbb{E}[\bm{\tilde{y}}]]\\[5pt]
+        &= \bm{f}\mathbb{E}[\bm{\tilde{y}}] - \bm{f}\mathbb{E}[\bm{\tilde{y}}] - \mathbb{E}[\bm{\tilde{y}}]^2 + \mathbb{E}[\bm{\tilde{y}}]^2\\[5pt]
+        &= 0
+    \end{aligned}
+\end{equation}
+Thus, are wq left with
+\begin{align*}
+         \mathbb{E}[(\bm{y}-\bm{\tilde{y}})^2] &= \mathbb{E}[(\bm{f}- \mathbb{E}[\bm{\tilde{y}}])^2 + (\mathbb{E}[\bm{\tilde{y}}]-\bm{\Tilde{y}})^2] + \sigma^2\\[5pt]
+         &= \underbrace{\mathbb{E}[(\bm{f}- \mathbb{E}[\bm{\tilde{y}}])^2]}_{\text{Bias}[\tilde{y}]} + \underbrace{\mathbb{E}[(\bm{\Tilde{y}}-\mathbb{E}[\bm{\tilde{y}}])^2]}_{\text{Var}[\tilde{y}]} + \sigma^2\\[5pt]
+         &= \text{Bias}[\tilde{y}] + \text{Var}[\tilde{y}] + \sigma^2.
+\end{align*}
+Which is what we wanted to show. $\Q$
+\end{document}
