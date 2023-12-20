@@ -1,0 +1,178 @@
+\documentclass[12pt,
+               a4paper,
+               article,
+               oneside,
+               english,oldfontcommands]{memoir}
+\usepackage{student}
+% Metadata
+\date{\today}
+\setmodule{FYS-STK4155: Applied Data Analysis and Machine Learning}
+\setterm{Fall, 2023}
+
+%-------------------------------%
+% Other details
+% TODO: Fill these
+%-------------------------------%
+\title{Weekly Exercises: Week 39}
+\setmembername{Jonas Semprini Næss}  % Fill group member names
+
+%-------------------------------%
+% Add / Delete commands and packages
+% TODO: Add / Delete here as you need
+%-------------------------------%
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+%\usepackage[utf8]{inputenc}
+\usepackage{setspace}
+\usepackage[T1]{fontenc}
+\usepackage{titling}% the wheel somebody else kindly made for us earlier
+\usepackage{fancyhdr}
+\usepackage{fancybox}
+\usepackage{epigraph} 
+\usepackage{tikz}
+\usepackage{bm}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.12}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyvrb}
+\usepackage[scaled]{beramono}
+\usepackage[final]{microtype}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{thmtools}
+\usepackage{babel}
+\usepackage{csquotes}
+\usepackage{listings}
+\usetikzlibrary{calc,intersections,through,backgrounds}
+\usepackage{tkz-euclide} 
+\lstset{basicstyle = \ttfamily}
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage[colorlinks, allcolors = uiolink]{hyperref}
+\usepackage[noabbrev]{cleveref}
+\pretolerance = 2000
+\tolerance    = 6000
+\hbadness     = 6000
+\newcounter{probnum}[section]
+\newcounter{subprobnum}[probnum] 
+\usepackage{dirtytalk}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage[section]{placeins}
+\usepackage{varwidth}
+\usepackage{optidef}
+\definecolor{uiolink}{HTML}{0B5A9D}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{frame=tb,
+  language=R,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=fullflexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+} 
+\usepackage{commath}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newcommand{\Q}{ \qquad \hfill \blacksquare}
+\newcommand\myeq{\stackrel{\mathclap{\normalfont{uif}}}{\sim}}
+\let\oldref\ref
+\renewcommand{\ref}[1]{(\oldref{#1})}
+\newtheorem{lemma}[theorem]{Lemma}
+\setlength \epigraphwidth {\linewidth}
+\setlength \epigraphrule {0pt}
+\AtBeginDocument{\renewcommand {\epigraphflush}{center}}
+\renewcommand {\sourceflush} {center}
+\parindent 0ex
+\renewcommand{\thesection}{\roman{section}} 
+\renewcommand{\thesubsection}{\thesection.\roman{subsection}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\T}{\top}
+\newcommand{\bl}{\left\{}
+\newcommand{\br}{\right\}}
+\newcommand{\spaze}{\vspace{4mm}\\}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Rel}{\mathbb{R}}
+\newcommand{\expdist}[2]{%
+        \normalfont{\textsc{Exp}}(#1, #2)%
+    }
+\newcommand{\expparam}{\bm \lambda}
+\newcommand{\Expparam}{\bm \Lambda}
+\newcommand{\natparam}{\bm \eta}
+\newcommand{\Natparam}{\bm H}
+\newcommand{\sufstat}{\bm u}
+
+% Main document
+\begin{document}
+\header{}
+\section*{\centering Outlines of the reoport}
+\subsection{\centering Abstract}
+This project aims to examine different regression methods to analyze topographic data of [insert place name], in particular the following methods: Ordinary Least Squares (OLS), Ridge regression and Lasso regression. An assessment is performed on these methods by studying their bias-variance trade-off through resampling techniques such as cross-validation and bootstrap, in addition to evaluating their mean squared error (MSE) and $R^2$ score. The regression methods are tested and assessed on Franke’s function, a widely known function used for testing interpolation and fitting algorithms, before proceeding with fitting the topographic data. Our findings suggest [insert regression method] to be the best method for fitting terrain data of [insert place name]. It performed well under the assessment with results such as [insert results].\\
+Keywords: (To be added when the report is more or less finished)
+
+\subsection*{Introduction}
+In the 1800s, Sir Francis Galton did a study on sweet peas, a self-fertilizing plant, to understand how strongly the characteristics of one generation would manifest in the following generation. It all started when he noticed the sweet pea packets distributed to his friends had substantial variations. A data set was created where he looked at the size of daughter peas against the size of mother peas and illustrated the basic foundation of what statisticians still call regression \cite{peas}. This report presents a comprehensive analysis of function fitting techniques applied to a two-dimensional function known as the Franke function (\cite{franke}). The primary goal is to assess the performance of three different regression methods, namely Ordinary Least Squares (OLS) (\cite{OLS}), Ridge Regression (\cite{Ridge and Lasso}), and Lasso Regression (\cite{Ridge and Lasso}), in terms of model accuracy, bias-variance trade-off (\cite{bias variance trade off}), and generalization capabilities. The study also incorporates resampling techniques (\cite{bootstrap}) and cross-validation (\cite{bootstrap}) to enhance the model evaluation process. Initially, the report outlines the theoretical background of the Franke function and the mathematical formulations of OLS, Ridge, and Lasso regression. The study explores the bias-variance trade-off, to understand the trade-offs between model complexity and generalization performance. To assess these trade-offs, the report employs resampling techniques such as cross-validation. In addition to synthetic data generated from the Franke function, this report extends its analysis to real-world data, offering practical insights into the application of these regression techniques in authentic scenarios. 
+
+\section{References}
+
+\begin{thebibliography}{9}
+\bibitem{peas}
+Stanton, J. M. (2017). \textit{Galton, Pearson, and the Peas: A Brief History of Linear Regression for Statistics Instructors}. Journal of Statistic Education, \textbf{9:3}, 1-2. \href{https://doi.org/10.1080/10691898.2001.11910537}{DOI}
+\vspace{2mm}
+\bibitem{Linear Regression}
+Jensen, M. H. (n.d.). \textit{Week 34: Introduction to the course, Logistics and Practicalities}. Applied Data Analysis and Machine Learning. Retrieved September 22, 2023, from \href{https://compphysics.github.io/MachineLearning/doc/LectureNotes/_build/html/week34.html}{Jupyter book}
+\vspace{2mm}
+\bibitem{OLS}
+Jensen, M. H. (n.d.). \textit{Week 35: From Ordinary Linear Regression to Ridge and Lasso Regression}. Applied Data Analysis and Machine Learning. Retrieved September 22, 2023, from \href{https://compphysics.github.io/MachineLearning/doc/LectureNotes/_build/html/week35.html}{Jupyter book}
+\vspace{2mm}
+\bibitem{Ridge and Lasso}
+Jensen, M. H. (n.d.). \textit{Week 36: Statistical interpretation of Linear Regression and Resampling techniques}. Applied Data Analysis and Machine Learning. Retrieved September 22, 2023, from \href{https://compphysics.github.io/MachineLearning/doc/LectureNotes/_build/html/week36.html}{Jupyter book}
+\vspace{2mm}
+\bibitem{bias variance trade off}
+Jensen, M. H. (n.d.). \textit{Week 37: Statistical interpretations and Resampling Methods}. Applied Data Analysis and Machine Learning. Retrieved September 22, 2023, from
+\href{https://compphysics.github.io/MachineLearning/doc/LectureNotes/_build/html/week37.html#the-bias-variance-tradeoff}{Jupyter book}
+\vspace{2mm}
+\bibitem{resampling}
+Arya, N. (2023, February 20). \textit{The Role of Resampling Techniques in Data Science}. KDnuggets. Retrieved September 23, 2023, from \href{https://www.kdnuggets.com/2023/02/role-resampling-techniques-data-science.html}{[Website]}
+\vspace{2mm}
+\bibitem{image: resampling}
+Arya, N. (2021). \textit{Resampling Techniques in Data Science}. KDnuggets. \href{https://www.kdnuggets.com/wp-content/uploads/arya_role_resampling_techniques_data_science_1.png}{[Photograph]}
+\vspace{2mm}
+\bibitem{bootstrap}
+Jensen, M. H. (n.d.). \textit{Week 37: Statistical Interpretations and Resampling Methods}. Applied Data Analysis and Machine Learning. Retrieved September 8, 2023, from
+\href{https://compphysics.github.io/MachineLearning/doc/LectureNotes/_build/html/week37.html}{Jupyter book}
+\vspace{2mm}
+\bibitem{R2}
+Jensen, M. H. (n.d.). \textit{Week 34: Introduction to the course, Logistics and Practicalities}. Applied Data Analysis and Machine Learning. Retrieved September 8, 2023, from \href{https://compphysics.github.io/MachineLearning/doc/LectureNotes/_build/html/week34.html}{Jupyter book}
+\vspace{2mm}
+\bibitem{MSE wikipedia}
+\textit{Mean squared error}. (2023, August 15). In Wikipedia. \href{https://en.wikipedia.org/wiki/Mean_squared_error}{URL}
+\vspace{2mm}
+\bibitem{franke}
+Jensen, M. H. (n.d.). \textit{Project 1 on Machine Learning, deadline October 9 (midnight)}, 2023. Applied Data Analysis and Machine Learning. Retrieved September 7, 2023, from \href{https://compphysics.github.io/MachineLearning/doc/LectureNotes/_build/html/project1.html#}{Jupyter Book}
+\vspace{2mm}
+\bibitem{CLT}
+\textit{Central Limit Theorem}. (This page was last edited on 27 September 2023, at 23:34 (UTC).)In Wikipedia. \href{https://en.wikipedia.org/wiki/Central_limit_theorem}{URL}
+\end{thebibliography}
+\end{document}

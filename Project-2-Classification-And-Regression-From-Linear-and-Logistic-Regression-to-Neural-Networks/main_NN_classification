@@ -1,0 +1,564 @@
+from functions import *
+from GD import *
+from NN import *
+
+
+def gridsearch_batchsize_logreg(x_train, x_test, y_train, y_test):
+    # learning_rates = [float(i) for i in range(-6, 0)]
+    epochs = [10, 100, 500, 1000, 5000]
+    batchsizes = [10, 20, 30, 50, 75, 100]
+
+    grid = np.zeros((len(batchsizes), len(epochs)))
+
+    for i, batchsize in enumerate(batchsizes):
+        for j, epoch in enumerate(epochs):
+            model = LogReg(x_train, y_train, optimizer=Adam(learning_rate=0.1))
+            model.train(epochs=epoch, batch_size=batchsize)
+            y_pred = model.predict(x_test)
+
+            accuracy_score = accuracy(y_test, y_pred)
+            grid[i, j] = accuracy_score
+
+            print(f"Progress: {i}/{len(batchsizes)} {j}/{len(epochs)}")
+
+    return grid
+
+
+def gridsearch_learningrate_logreg(x_train, x_test, y_train, y_test):
+    learning_rates = [float(i) for i in range(-6, 0)]
+    epochs = [10, 100, 500, 1000, 5000]
+
+    grid = np.zeros((len(batchsizes), len(epochs)))
+
+    for i, learning_rate in enumerate(learning_rates):
+        for j, epoch in enumerate(epochs):
+            model = LogReg(
+                x_train, y_train, optimizer=Adam(learning_rate=10 ** (learning_rate))
+            )
+            model.train(epochs=epoch, batch_size=20)
+            y_pred = model.predict(x_test)
+
+            accuracy_score = accuracy(y_test, y_pred)
+            grid[i, j] = accuracy_score
+
+            print(f"Progress: {i}/{len(learning_rates)} {j}/{len(epochs)}")
+
+    return grid
+
+
+# def gridsearch_optimizers(x_train, x_test, y_train, y_test):
+#     optimizers = [None, "momentum", "adagrad", "rmsprop", "adam"]
+
+#     grid = np.zeros(len(optimizers))
+
+#     for i, optimizer in enumerate(optimizers):
+#         model = LogReg(x_train, y_train, optimizer=add_optimizer(optimizer, 0.11))
+#         model.train(epochs=5000, batch_size=20)
+#         y_pred = model.predict(x_test)
+
+#         accuracy_score = accuracy(y_test, y_pred)
+#         grid[i] = accuracy_score
+
+#         print(f"Progress: {i}/{len(optimizers)}")
+
+#     return grid
+
+
+def gridsearch_nn_learning_epochs(x_train, x_test, y_train, y_test):
+    learning_rates = [float(i) for i in range(-6, 0)]
+    epochs = [10, 100, 500, 1000, 5000]
+
+    grid = np.zeros((len(learning_rates), len(epochs)))
+
+    for i, learning_rate in enumerate(learning_rates):
+        for j, epoch in enumerate(epochs):
+            nn = build_neural_network(
+                input_size=x_train.shape[1],
+                output_size=y_train.shape[1],
+                n_hidden_layer=1,
+                n_hidden_nodes=30,
+                cost_function=cross_entropy_loss,
+                cost_function_derivative=cross_entropy_loss_derivative,
+                activation_function="sigmoid",
+                optimizer="adam",
+                learning_rate=10**learning_rate,
+                last_activation="sigmoid",
+                regularization=1.0,
+            )
+            nn.train(x_train, y_train, epochs=epoch, method="sgd", minibatch_size=20)
+            y_pred = nn.classify(x_test)
+
+            accuracy_score = accuracy(y_test, y_pred)
+            grid[i, j] = accuracy_score
+
+            print(f"Progress: {i}/{len(learning_rates)} {j}/{len(epochs)}")
+
+    return grid
+
+
+def gridsearch_nn_epochs_batchsize(x_train, x_test, y_train, y_test):
+    batchsizes = [10, 20, 30, 50, 75, 100]
+    epochs = [10, 100, 500, 1000]
+
+    grid = np.zeros((len(epochs), len(batchsizes)))
+
+    for i, epoch in enumerate(epochs):
+        for j, batchsize in enumerate(batchsizes):
+            nn = build_neural_network(
+                input_size=x_train.shape[1],
+                output_size=y_train.shape[1],
+                n_hidden_layer=2,
+                n_hidden_nodes=5,
+                cost_function=cross_entropy_loss,
+                cost_function_derivative=cross_entropy_loss_derivative,
+                activation_function="sigmoid",
+                optimizer="adam",
+                learning_rate=10**-2,
+                last_activation="sigmoid",
+                regularization=1.0,
+            )
+            nn.train(
+                x_train, y_train, epochs=epoch, method="sgd", minibatch_size=batchsize
+            )
+            y_pred = nn.classify(x_test)
+
+            accuracy_score = accuracy(y_test, y_pred)
+            grid[i, j] = accuracy_score
+
+    return grid
+
+
+def gridsearch_nn_layers_nodes(x_train, x_test, y_train, y_test):
+    layers = [1, 2, 3]
+    nodes = [5, 10, 20, 30, 50]
+
+    grid = np.zeros((len(layers), len(nodes)))
+
+    for i, layer in enumerate(layers):
+        for j, node in enumerate(nodes):
+            nn = build_neural_network(
+                input_size=x_train.shape[1],
+                output_size=y_train.shape[1],
+                n_hidden_layer=layer,
+                n_hidden_nodes=node,
+                cost_function=cross_entropy_loss,
+                cost_function_derivative=cross_entropy_loss_derivative,
+                activation_function="sigmoid",
+                optimizer="adam",
+                learning_rate=10**-2,
+                last_activation="sigmoid",
+                regularization=1.0,
+            )
+            nn.train(x_train, y_train, epochs=1000, method="sgd", minibatch_size=50)
+            y_pred = nn.classify(x_test)
+
+            accuracy_score = accuracy(y_test, y_pred)
+            grid[i, j] = accuracy_score
+
+    return grid
+
+
+def histogram_logreg(iterations=10):
+    accuracy_score_list = []
+
+    for i in range(iterations):
+        """Load the data"""
+        np.random.seed(i)
+        X, y = generate_cancer_data()
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=i
+        )
+
+        scaler = MinMaxScaler()
+        scaler.fit(X_train)
+        X_train = scaler.transform(X_train)
+        X_test = scaler.transform(X_test)
+
+        input_size = X_train.shape[1]
+        output_size = y_train.shape[1]
+
+        model = LogReg(X_train, y_train, optimizer=Adam(learning_rate=0.1))
+        model.train(epochs=1000, batch_size=30)
+        y_pred = model.predict(X_test)
+
+        accuracy_score = accuracy(y_test, y_pred)
+        accuracy_score_list.append(accuracy_score)
+
+        print(f"{100*(i+1)/(iterations):.1f}%")
+
+    plt.hist(accuracy_score_list, bins=20, lw=1, ec=colors[4], fc=colors[1], alpha=0.5)
+    # plt.show()
+    plt.xlabel("Accuracy")
+    plt.ylabel("Frequency")
+    plt.title(f"Histogram of accuracy scores for {iterations} iterations")
+
+    plt.savefig("figures/cancer_logreg_histogram.eps")
+    plt.clf()
+
+
+def histogram_nn(iterations=10):
+    accuracy_score_list = []
+
+    for i in range(iterations):
+        """Load the data"""
+        np.random.seed(i)
+        X, y = generate_cancer_data()
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=i
+        )
+
+        scaler = MinMaxScaler()
+        scaler.fit(X_train)
+        X_train = scaler.transform(X_train)
+        X_test = scaler.transform(X_test)
+
+        input_size = X_train.shape[1]
+        output_size = y_train.shape[1]
+
+        nn = build_neural_network(
+            input_size,
+            output_size,
+            n_hidden_layer=1,
+            n_hidden_nodes=30,
+            cost_function=cross_entropy_loss,
+            cost_function_derivative=cross_entropy_loss_derivative,
+            activation_function="sigmoid",
+            optimizer="adam",
+            last_activation="sigmoid",
+            learning_rate=0.01,
+            regularization=1.0,
+        )
+
+        nn.train(
+            X_train,
+            y_train,
+            epochs=1000,
+            method="sgd",
+            minibatch_size=50,
+        )
+        ypred = nn.classify(X_test)
+
+        accuracy_score = accuracy(y_test, ypred)
+        accuracy_score_list.append(accuracy_score)
+
+        print(f"{100*(i+1)/(iterations):.1f}%")
+
+    plt.hist(accuracy_score_list, bins=20, lw=1, ec=colors[4], fc=colors[1], alpha=0.5)
+    # plt.show()
+    plt.xlabel("Accuracy")
+    plt.ylabel("Frequency")
+    plt.title(f"Histogram of accuracy scores for {iterations} iterations")
+
+    plt.savefig("figures/cancer_nn_histogram.eps")
+    plt.clf()
+
+
+def cancer_confusion_matrix_nn(X_train, X_test, y_train, y_test):
+    input_size = X_train.shape[1]
+    output_size = y_train.shape[1]
+
+    nn = build_neural_network(
+        input_size,
+        output_size,
+        n_hidden_layer=1,
+        n_hidden_nodes=30,
+        cost_function=cross_entropy_loss,
+        cost_function_derivative=cross_entropy_loss_derivative,
+        activation_function="sigmoid",
+        optimizer="adam",
+        last_activation="sigmoid",
+        learning_rate=0.01,
+        regularization=1.0,
+    )
+
+    nn.train(
+        X_train,
+        y_train,
+        epochs=100,
+        method="sgd",
+        minibatch_size=20,
+    )
+    y_pred = nn.classify(X_test)
+
+    cmatrix = confusion_matrix(y_test, y_pred)
+
+    cmatrix_p = 100 * (cmatrix / (np.sum(cmatrix, axis=1, keepdims=True)))
+
+    im = sns.heatmap(
+        cmatrix_p,
+        annot=True,
+        fmt=".2f",
+        cmap="Blues",
+    )
+    im.set_yticklabels(["No cancer", "Cancer"], rotation=90)
+    im.set_xticklabels(["No cancer", "Cancer"], rotation=0)
+
+    for t in im.texts:
+        t.set_text(t.get_text() + "\%")
+
+    cbar = im.collections[0].colorbar
+    cbar.set_ticks([np.min(cmatrix_p), 25, 50, 75, np.max(cmatrix_p)])
+    cbar.set_ticklabels(["0\%", "25\%", "50\%", "75\%", "100\%"])
+
+    im.set_title("Confusion matrix")
+    im.set_ylabel("True label")
+    im.set_xlabel("Predicted label")
+
+    plt.savefig("figures/nn_confusion_matrix.eps")
+
+    plt.show()
+
+    accuracy_score = accuracy(y_test, y_pred)
+    print(accuracy_score)
+
+
+def plot_heatmap(
+    grid, xticklabels, yticklabels, title, xlabel, ylabel, output_filename=None
+):
+    im = sns.heatmap(
+        grid,
+        xticklabels=xticklabels,
+        yticklabels=yticklabels,
+        cmap="YlGn",
+        alpha=1.0,
+        annot=True,
+        linewidth=0.5,
+        fmt=".2f",
+        annot_kws={"fontsize": 9},
+        vmax=1.0,
+        vmin=0.5,
+    )  # YlGn
+
+    # im.collections[0].set_clim(np.max(grid), 0.8)
+
+    im.set_title(title)
+    im.set_xlabel(xlabel)
+    im.set_ylabel(ylabel)
+
+    plt.savefig(f"{output_filename}")
+    # plt.show()
+    plt.clf()
+
+
+def histograms_overlay(iterations=10):
+    accuracy_score_list_logreg = []
+    accuracy_score_list_nn = []
+
+    for i in range(iterations):
+        """Load the data"""
+        np.random.seed(i)
+        X, y = generate_cancer_data()
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=i
+        )
+
+        scaler = MinMaxScaler()
+        scaler.fit(X_train)
+        X_train = scaler.transform(X_train)
+        X_test = scaler.transform(X_test)
+
+        input_size = X_train.shape[1]
+        output_size = y_train.shape[1]
+
+        model = LogReg(X_train, y_train, optimizer=Adam(learning_rate=0.1))
+        model.train(epochs=1000, batch_size=30)
+        y_pred = model.predict(X_test)
+
+        accuracy_score = accuracy(y_test, y_pred)
+        accuracy_score_list_logreg.append(accuracy_score)
+
+        nn = build_neural_network(
+            input_size,
+            output_size,
+            n_hidden_layer=1,
+            n_hidden_nodes=30,
+            cost_function=cross_entropy_loss,
+            cost_function_derivative=cross_entropy_loss_derivative,
+            activation_function="sigmoid",
+            optimizer="adam",
+            last_activation="sigmoid",
+            learning_rate=0.01,
+            regularization=1.0,
+        )
+
+        nn.train(
+            X_train,
+            y_train,
+            epochs=1000,
+            method="sgd",
+            minibatch_size=30,
+        )
+        ypred = nn.classify(X_test)
+
+        accuracy_score = accuracy(y_test, ypred)
+        accuracy_score_list_nn.append(accuracy_score)
+
+        print(f"{100*(i+1)/(iterations):.1f}%")
+
+    bins = np.linspace(
+        min(np.min(accuracy_score_list_logreg), np.min(accuracy_score_list_nn)),
+        1.0,
+        20,
+    )
+
+    plt.hist(
+        [accuracy_score_list_logreg, accuracy_score_list_nn],
+        bins,
+        alpha=0.5,
+        color=[colors[0], colors[1]],
+        label=["Logistic Regression", "FFNN"],
+    )
+    # plt.hist(accuracy_score_list_nn, bins, alpha=0.5, label="FFNN")
+    plt.legend(loc="upper left")
+
+    # plt.show()
+    plt.xlabel("Accuracy")
+    plt.ylabel("Frequency")
+    plt.title(f"Histogram of accuracy scores for {iterations} iterations")
+
+    plt.savefig("figures/cancer_nn_logreg_histogram.eps")
+    plt.clf()
+    # plt.show()
+
+
+if __name__ == "__main__":
+    np.random.seed(2021)
+
+    learning_rates = [float(i) for i in range(-6, 0)]
+    epochs = [10, 100, 500, 1000, 5000]
+
+    batchsizes = [10, 20, 30, 50, 75, 100]
+    optimizers = [None, "momentum", "adagrad", "rmsprop", "adam"]
+    layers = [1, 2, 3]
+    nodes = [5, 10, 20, 30, 50]
+
+    X, y = generate_cancer_data()
+    print(X.shape, y.shape)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=2023
+    )
+
+    scaler = MinMaxScaler()
+    scaler.fit(X_train)
+    X_train = scaler.transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    # grid_batch_epochs = gridsearch_learningrate_logreg(X_train, X_test, y_train, y_test)
+    # np.save("grid_batch_epochs.npy", grid_batch_epochs)
+    # grid_batch_epochs = np.load("grid_batch_epochs.npy")
+
+    # print("Logitsic Regression on cancer data")
+    # print("Batchsize, epochs")
+    # print(grid_batch_epochs)
+
+    # plot_heatmap(
+    #     grid_batch_epochs,
+    #     epochs,
+    #     learning_rates,
+    #     "Accuracy score for LOGREG on cancer data",
+    #     "Epochs",
+    #     "Learning rate",
+    #     "figures/Cancer_logreg.eps",
+    # )
+
+    # epochs = [10, 100, 500, 1000]
+
+    # grid_optimizers = gridsearch_optimizers(X_train, X_test, y_train, y_test).reshape(
+    #     -1, 1
+    # )
+    # np.save("grid_optimizers.npy", grid_optimizers)
+    # grid_optimizers = np.load("grid_optimizers.npy")
+    # print("Optimizers")
+    # print(grid_optimizers)
+
+    # plot_heatmap(
+    #     grid_optimizers,
+    #     [""],
+    #     ["normal"] + optimizers[1:],
+    #     "Accuracy",
+    #     "",
+    #     "Optimizers",
+    #     "figures/Cancer_logreg_optimizers.eps",
+    # )
+
+    # grid_nn_learning_epochs = gridsearch_nn_learning_epochs(
+    #     X_train, X_test, y_train, y_test
+    # )
+    # np.save("grid_nn_learning_epochs.npy", grid_nn_learning_epochs)
+    # grid_nn_learning_epochs = np.load("grid_nn_learning_epochs.npy")
+    # print("Neural Network on cancer data")
+    # print("learning rate and epochs")
+    # print(grid_nn_learning_epochs)
+
+    # plot_heatmap(
+    #     grid_nn_learning_epochs,
+    #     epochs,
+    #     learning_rates,
+    #     "Accuracy score for FFNN on cancer data",
+    #     "Epochs",
+    #     "Learning Rate",
+    #     "figures/Cancer_learningrate_epochs_nn.eps",
+    # )
+
+    # grid_logreg_learning_epochs = gridsearch_learningrate_logreg(
+    #     X_train, X_test, y_train, y_test
+    # )
+    # np.save("grid_logreg_learning_epochs.npy", grid_logreg_learning_epochs)
+    # grid_logreg_learning_epochs = np.load("grid_logreg_learning_epochs.npy")
+
+    # plot_heatmap(
+    #     grid_logreg_learning_epochs,
+    #     epochs + [5000],
+    #     learning_rates,
+    #     "Cancer",
+    #     "Epochs",
+    #     "Learning Rate",
+    #     "figures/Cancer_learningrate_epochs_nn.eps",
+    # )
+
+    # grid_nn_epochs_batchsize = gridsearch_nn_epochs_batchsize(
+    #     X_train, X_test, y_train, y_test
+    # )
+    # np.save("grid_nn_epochs_batchsize.npy", grid_nn_epochs_batchsize)
+    # grid_nn_epochs_batchsize = np.load("grid_nn_epochs_batchsize.npy")
+    # print("Epochs and batchsize")
+    # print(grid_nn_epochs_batchsize)
+
+    # plot_heatmap(
+    #     grid_nn_epochs_batchsize,
+    #     batchsizes,
+    #     epochs,
+    #     "Cancer",
+    #     "Batchsize",
+    #     "Epochs",
+    #     "figures/Cancer_logreg_nn_batchsize.eps",
+    # )
+
+    # grid_nn_layers_nodes = gridsearch_nn_layers_nodes(X_train, X_test, y_train, y_test)
+
+    # np.save("grid_nn_layers_nodes.npy", grid_nn_layers_nodes)
+    # grid_nn_layers_nodes = np.load("grid_nn_layers_nodes.npy")
+    # print("Layers and nodes")
+    # print(grid_nn_layers_nodes)
+
+    # plot_heatmap(
+    #     grid_nn_layers_nodes,
+    #     nodes,
+    #     layers,
+    #     "Cancer",
+    #     "Nodes",
+    #     "Layers",
+    #     "figures/Cancer_logreg_nn_layers_nodes.eps",
+    # )
+
+    # Best NN: 100 epochs, 20 batchsize, 0.01 learning rate, 1.0 regularization, layer 1, 30 nodes
+    # Best logreg: 5000 epochs, 30 batchsize, 0.1 learning rate
+
+    # histogram_nn(iterations=10)
+    # histogram_logreg(iterations=10)
+    # histograms_overlay(iterations=200)
+
+    # cancer_confusion_matrix_nn(X_train, X_test, y_train, y_test)
